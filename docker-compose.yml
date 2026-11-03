@@ -1,0 +1,56 @@
+version: "3.9"
+
+services:
+  # ─── TigerGraph Database ──────────────────────────────────
+  tigergraph:
+    image: docker.io/tigergraph/tigergraph:latest
+    container_name: fraudgraph-tigergraph
+    ports:
+      - "14240:14240"   # GraphStudio / Admin
+      - "9000:9000"     # RESTPP API
+      - "14241:14241"   # GSQL
+    environment:
+      - TG_PASSWORD=tigergraph
+    volumes:
+      - tigergraph_data:/home/tigergraph/tigergraph/data
+    ulimits:
+      nofile:
+        soft: 1000000
+        hard: 1000000
+    restart: unless-stopped
+
+  # ─── FastAPI Backend ──────────────────────────────────────
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: fraudgraph-api
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    depends_on:
+      - tigergraph
+    volumes:
+      - ./src:/app/src
+      - ./outputs:/app/outputs
+    restart: unless-stopped
+
+  # ─── Streamlit UI ─────────────────────────────────────────
+  ui:
+    build:
+      context: .
+      dockerfile: Dockerfile.ui
+    container_name: fraudgraph-ui
+    ports:
+      - "8501:8501"
+    env_file:
+      - .env
+    depends_on:
+      - api
+    volumes:
+      - ./ui:/app/ui
+    restart: unless-stopped
+
+volumes:
+  tigergraph_data:

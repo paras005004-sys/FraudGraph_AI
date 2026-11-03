@@ -1,0 +1,49 @@
+// ============================================================================
+// FraudGraph AI — TigerGraph Loading Job Definition
+// Graph: FraudGraph
+// Source Directory: data/graph_load/
+// ============================================================================
+
+USE GRAPH FraudGraph
+
+CREATE LOADING JOB load_fraud_graph FOR GRAPH FraudGraph {
+    DEFINE FILENAME file_customer = "./data/graph_load/vertices/Customer.csv";
+    DEFINE FILENAME file_card = "./data/graph_load/vertices/Card.csv";
+    DEFINE FILENAME file_transaction = "./data/graph_load/vertices/Transaction.csv";
+    DEFINE FILENAME file_device = "./data/graph_load/vertices/DeviceProfile.csv";
+    DEFINE FILENAME file_email = "./data/graph_load/vertices/EmailDomain.csv";
+    DEFINE FILENAME file_region = "./data/graph_load/vertices/BillingRegion.csv";
+    DEFINE FILENAME file_closed_case = "./data/graph_load/vertices/ClosedCase.csv";
+
+    DEFINE FILENAME file_owns = "./data/graph_load/edges/OWNS.csv";
+    DEFINE FILENAME file_made = "./data/graph_load/edges/MADE.csv";
+    DEFINE FILENAME file_from_device = "./data/graph_load/edges/FROM_DEVICE.csv";
+    DEFINE FILENAME file_purchaser_email = "./data/graph_load/edges/PURCHASER_EMAIL.csv";
+    DEFINE FILENAME file_billed_in = "./data/graph_load/edges/BILLED_IN.csv";
+    DEFINE FILENAME file_next = "./data/graph_load/edges/NEXT.csv";
+    DEFINE FILENAME file_involves = "./data/graph_load/edges/INVOLVES.csv";
+    DEFINE FILENAME file_on_card = "./data/graph_load/edges/ON_CARD.csv";
+    DEFINE FILENAME file_connected_to = "./data/graph_load/edges/CONNECTED_TO.csv";
+
+    // 1. Vertices
+    LOAD file_customer TO VERTEX Customer VALUES($"customer_id") USING SEPARATOR=",", HEADER="true";
+    LOAD file_card TO VERTEX Card VALUES($"card_id", $"customer_id", $"card1", $"card_network", $"card_type") USING SEPARATOR=",", HEADER="true";
+    LOAD file_transaction TO VERTEX Transaction VALUES($"TransactionID", $"customer_id", $"ts", $"channel", $"risk_score", $"TransactionAmt", $"ProductCD", $"C1", $"C2", $"D1", $"D2") USING SEPARATOR=",", HEADER="true";
+    LOAD file_device TO VERTEX DeviceProfile VALUES($"device_profile_id", $"device_type", $"device_info", $"os", $"browser", $"screen", $"proxy_status", $"device_status") USING SEPARATOR=",", HEADER="true";
+    LOAD file_email TO VERTEX EmailDomain VALUES($"domain_name") USING SEPARATOR=",", HEADER="true";
+    LOAD file_region TO VERTEX BillingRegion VALUES($"addr1", $"country_code") USING SEPARATOR=",", HEADER="true";
+    LOAD file_closed_case TO VERTEX ClosedCase VALUES($"case_id", $"customer_id", $"card_id", $"opened_at", $"closed_at", $"outcome", $"pattern", $"first_fraud_txn_id", $"n_txns", $"exposure_usd", $"actions_taken", $"report_filed", $"analyst_notes") USING SEPARATOR=",", HEADER="true";
+
+    // 2. Edges
+    LOAD file_owns TO EDGE OWNS VALUES($"from_id", $"to_id") USING SEPARATOR=",", HEADER="true";
+    LOAD file_made TO EDGE MADE VALUES($"from_id", $"to_id") USING SEPARATOR=",", HEADER="true";
+    LOAD file_from_device TO EDGE FROM_DEVICE VALUES($"from_id", $"to_id") USING SEPARATOR=",", HEADER="true";
+    LOAD file_purchaser_email TO EDGE PURCHASER_EMAIL VALUES($"from_id", $"to_id") USING SEPARATOR=",", HEADER="true";
+    LOAD file_billed_in TO EDGE BILLED_IN VALUES($"from_id", $"to_id") USING SEPARATOR=",", HEADER="true";
+    LOAD file_next TO EDGE NEXT VALUES($"from_id", $"to_id") USING SEPARATOR=",", HEADER="true";
+    LOAD file_involves TO EDGE INVOLVES VALUES($"from_id", $"to_id") USING SEPARATOR=",", HEADER="true";
+    LOAD file_on_card TO EDGE ON_CARD VALUES($"from_id", $"to_id") USING SEPARATOR=",", HEADER="true";
+    LOAD file_connected_to TO EDGE CONNECTED_TO VALUES($"from_id", $"to_id") USING SEPARATOR=",", HEADER="true";
+}
+
+RUN LOADING JOB load_fraud_graph

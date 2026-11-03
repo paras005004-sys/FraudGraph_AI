@@ -1,0 +1,240 @@
+{
+  "case_id": "HHG-019",
+  "case": {
+    "status": "closed_fraud",
+    "verdict": "fraud",
+    "fraud_probability": 0.86,
+    "pattern": "card_not_present_new_device",
+    "pattern_description": "Online transactions sharing device profile across multiple distinct cards.",
+    "affected_txn_ids": [
+      "3503878"
+    ],
+    "first_suspicious_txn_id": "3503878",
+    "connected_card_ids": [
+      "C00854-K1",
+      "C01104-K1",
+      "C01138-K1",
+      "C01730-K1",
+      "C01744-K1",
+      "C01828-K1",
+      "C01924-K1",
+      "C01983-K1",
+      "C02250-K1",
+      "C02354-K1",
+      "C02686-K1",
+      "C02716-K1",
+      "C02716-K2",
+      "C03040-K1",
+      "C04125-K1",
+      "C05312-K1",
+      "C05704-K1",
+      "C05999-K1",
+      "C06224-K1",
+      "C06682-K1",
+      "C07212-K1",
+      "C07518-K1",
+      "C08256-K2",
+      "C08798-K1",
+      "C09165-K1",
+      "C09445-K1",
+      "C09454-K1",
+      "C09481-K1",
+      "C09604-K1",
+      "C10405-K1",
+      "C11000-K1",
+      "C11227-K1",
+      "C11309-K1",
+      "C11522-K1",
+      "C11709-K1",
+      "C12040-K1",
+      "C12755-K1"
+    ],
+    "connected_device_profiles": [
+      "iOS Device | iOS 10.3.1 | mobile safari 10.0 | 2048x1536",
+      "rv:57.0 | Mac OS X 10.10 | firefox 57.0 | 1280x800",
+      "Windows | other | chrome 61.0 | 1280x720"
+    ],
+    "exposure_usd": 99.92,
+    "evidence": [
+      {
+        "claim": "Flagged transaction 3503878: $99.92, ts=2016-12-01 17:28:53, channel=online, score=0.9",
+        "source": "graph",
+        "ref": "tool:get_transaction_details(txn_id=3503878)",
+        "entity_ids": [
+          "3503878"
+        ]
+      },
+      {
+        "claim": "Card C07987-K2 history contains 11 total recorded transactions",
+        "source": "graph",
+        "ref": "tool:get_card_history(card_id=C07987-K2)",
+        "entity_ids": [
+          "C07987-K2"
+        ]
+      },
+      {
+        "claim": "Card C07987-K2 shares device profile(s) with 37 other card(s): C00854-K1, C01104-K1, C01138-K1",
+        "source": "graph",
+        "ref": "tool:find_shared_devices(card_id=C07987-K2)",
+        "entity_ids": [
+          "C07987-K2",
+          "C00854-K1",
+          "C01104-K1",
+          "C01138-K1"
+        ]
+      },
+      {
+        "claim": "Card C07987-K2 is linked to 4 prior closed case(s): CC-2011, CC-2087, CC-2860",
+        "source": "graph",
+        "ref": "tool:get_historical_closed_cases(card_id=C07987-K2)",
+        "entity_ids": [
+          "C07987-K2",
+          "CC-2011",
+          "CC-2087",
+          "CC-2860"
+        ]
+      },
+      {
+        "claim": "Multiple cards (37) share identical device profile across accounts.",
+        "source": "graph",
+        "ref": "tool:find_shared_devices(card_id=C07987-K2)",
+        "entity_ids": [
+          "C07987-K2",
+          "C00854-K1",
+          "C01104-K1",
+          "C01138-K1"
+        ]
+      },
+      {
+        "claim": "GraphRAG identified 5 relevant historical closed case(s): CC-2011, CC-2860, CC-5026.",
+        "source": "document",
+        "ref": "tool:vector_search::closed_cases",
+        "entity_ids": [
+          "CC-2011",
+          "CC-2860",
+          "CC-5026"
+        ]
+      },
+      {
+        "claim": "Customer denies making the purchase and confirms card retained in possession.",
+        "source": "customer",
+        "ref": "evidence_request:1",
+        "entity_ids": []
+      }
+    ],
+    "similar_prior_cases": [
+      "CC-2011",
+      "CC-2860",
+      "CC-5026",
+      "CC-2087",
+      "CC-0633"
+    ],
+    "summary": "Investigation HHG-019 closed with verdict 'fraud' and pattern 'card_not_present_new_device'. Total assessed exposure is $99.92 with assessed fraud probability of 0.86. A Suspicious Activity Report (SAR) was prepared for regulatory submission.",
+    "written_to_graph": true,
+    "graph_case_id": "HHG-019"
+  },
+  "evidence_requests": [
+    {
+      "type": "customer_validation",
+      "asked_after_step": 6,
+      "assumed_response": "Customer denies making the purchase and confirms card retained in possession."
+    }
+  ],
+  "next_best_actions": {
+    "initial": [
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "R6: shared origin identified across 37 card(s)"
+      },
+      {
+        "action": "FILE_REPORT",
+        "route": "L2",
+        "reason": "R6: coordinated fraud activity from shared origin"
+      },
+      {
+        "action": "MONITOR_CONNECTED_CARDS",
+        "route": "auto",
+        "reason": "R6: monitoring 37 card(s) sharing the same origin"
+      }
+    ],
+    "final": [
+      {
+        "action": "BLOCK_CARD",
+        "route": "L1",
+        "reason": "R2: customer denied; exposure $99.92 \u2192 route ApprovalRoute.L1"
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "R2: customer denied transaction"
+      },
+      {
+        "action": "FILE_REPORT",
+        "route": "L2",
+        "reason": "R2: shared device with 37 card(s)"
+      },
+      {
+        "action": "MONITOR_CONNECTED_CARDS",
+        "route": "auto",
+        "reason": "R2: shared device profile across 37 card(s)"
+      }
+    ],
+    "what_changed": "Added: BLOCK_CARD Customer denied the transaction, confirming fraud and elevating actions."
+  },
+  "sar": {
+    "file": true,
+    "reason": "Policy R2/R6: confirmed fraud with qualifying exposure/shared entity",
+    "narrative": "Between 2016-12-01 and 2016-12-01, suspicious transaction activity totaling $99.92 was identified on card C07987-K2 owned by customer C07987. Activity matched the 'card_not_present_new_device' typology. The primary transaction was conducted via the online channel. The cardholder verified unauthorized activity. The compromise connects to 37 other card(s) through shared device profiles. Immediate mitigation including card blocking and downstream monitoring was enacted in accordance with bank policy.",
+    "subjects": [
+      "C07987",
+      "C07987-K2",
+      "C00854-K1",
+      "C01104-K1",
+      "C01138-K1",
+      "C01730-K1",
+      "C01744-K1",
+      "C01828-K1",
+      "C01924-K1",
+      "C01983-K1",
+      "C02250-K1",
+      "C02354-K1",
+      "C02686-K1",
+      "C02716-K1",
+      "C02716-K2",
+      "C03040-K1",
+      "C04125-K1",
+      "C05312-K1",
+      "C05704-K1",
+      "C05999-K1",
+      "C06224-K1",
+      "C06682-K1",
+      "C07212-K1",
+      "C07518-K1",
+      "C08256-K2",
+      "C08798-K1",
+      "C09165-K1",
+      "C09445-K1",
+      "C09454-K1",
+      "C09481-K1",
+      "C09604-K1",
+      "C10405-K1",
+      "C11000-K1",
+      "C11227-K1",
+      "C11309-K1",
+      "C11522-K1",
+      "C11709-K1",
+      "C12040-K1",
+      "C12755-K1"
+    ],
+    "total_amount_usd": 99.92,
+    "activity_dates": [
+      "2016-12-01",
+      "2016-12-01"
+    ]
+  },
+  "stop_reason": "Fraud probability 0.86 >= 0.85 supported by 2 independent evidence signals (Section 6)",
+  "tool_calls": 9,
+  "tokens": 0,
+  "latency_s": 0.04
+}

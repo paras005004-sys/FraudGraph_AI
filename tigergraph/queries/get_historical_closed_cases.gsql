@@ -1,0 +1,16 @@
+USE GRAPH FraudGraph
+
+// ----------------------------------------------------------------------------
+// Query 7: Get Historical Closed Cases
+// ----------------------------------------------------------------------------
+CREATE QUERY get_historical_closed_cases(STRING target_card_id, STRING target_customer_id) FOR GRAPH FraudGraph {
+    Cards = {Card.*};
+    TargetCard = SELECT c FROM Cards:c WHERE c.card_id == target_card_id;
+    
+    // Closed cases on card
+    CasesOnCard = SELECT cc FROM TargetCard:c -(<ON_CARD)- ClosedCase:cc;
+    // Connected cases
+    ConnectedCases = SELECT cc FROM TargetCard:c -(<CONNECTED_TO)- ClosedCase:cc;
+    
+    PRINT TargetCard, CasesOnCard, ConnectedCases;
+}

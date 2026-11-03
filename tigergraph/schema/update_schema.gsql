@@ -1,0 +1,96 @@
+// ============================================================================
+// FraudGraph AI — TigerGraph 4.2.5 GSQL Schema-Change Script
+// Graph: FraudGraph
+// Baseline: docs/RELATIONSHIP_AUDIT_REPORT.md & docs/data-model.md
+// Assumption: Transaction and Card vertices already exist.
+// ============================================================================
+
+USE GRAPH FraudGraph
+
+CREATE SCHEMA_CHANGE JOB update_fraud_graph_schema FOR GRAPH FraudGraph {
+
+    // ------------------------------------------------------------------------
+    // 1. ADD REMAINING VALIDATED VERTEX TYPES (5 Vertices)
+    // ------------------------------------------------------------------------
+
+    // Customer Vertex
+    ADD VERTEX Customer (
+        PRIMARY_ID customer_id STRING
+    ) WITH STATS="TRUE";
+
+    // DeviceProfile Vertex (Composite ID: DeviceInfo | OS | Browser | Screen)
+    ADD VERTEX DeviceProfile (
+        PRIMARY_ID device_profile_id STRING,
+        device_type STRING,
+        device_info STRING,
+        os STRING,
+        browser STRING,
+        screen STRING,
+        proxy_status STRING,
+        device_status STRING
+    ) WITH STATS="TRUE";
+
+    // EmailDomain Vertex
+    ADD VERTEX EmailDomain (
+        PRIMARY_ID domain_name STRING
+    ) WITH STATS="TRUE";
+
+    // BillingRegion Vertex
+    ADD VERTEX BillingRegion (
+        PRIMARY_ID addr1 STRING,
+        country_code DOUBLE
+    ) WITH STATS="TRUE";
+
+    // ClosedCase Vertex (Historical Investigations & Case Memory)
+    ADD VERTEX ClosedCase (
+        PRIMARY_ID case_id STRING,
+        customer_id STRING,
+        card_id STRING,
+        opened_at STRING,
+        closed_at STRING,
+        outcome STRING,
+        pattern STRING,
+        first_fraud_txn_id STRING,
+        n_txns INT,
+        exposure_usd DOUBLE,
+        actions_taken STRING,
+        report_filed STRING,
+        analyst_notes STRING
+    ) WITH STATS="TRUE";
+
+    // ------------------------------------------------------------------------
+    // 2. ADD ALL 9 VALIDATED DIRECTED EDGE TYPES
+    // ------------------------------------------------------------------------
+
+    // OWNS: Customer -> Card
+    ADD DIRECTED EDGE OWNS (FROM Customer, TO Card) WITH STATS="TRUE";
+
+    // MADE: Card -> Transaction
+    ADD DIRECTED EDGE MADE (FROM Card, TO Transaction) WITH STATS="TRUE";
+
+    // FROM_DEVICE: Transaction -> DeviceProfile
+    ADD DIRECTED EDGE FROM_DEVICE (FROM Transaction, TO DeviceProfile) WITH STATS="TRUE";
+
+    // PURCHASER_EMAIL: Transaction -> EmailDomain
+    ADD DIRECTED EDGE PURCHASER_EMAIL (FROM Transaction, TO EmailDomain) WITH STATS="TRUE";
+
+    // BILLED_IN: Transaction -> BillingRegion
+    ADD DIRECTED EDGE BILLED_IN (FROM Transaction, TO BillingRegion) WITH STATS="TRUE";
+
+    // NEXT: Transaction -> Transaction (Chronological sequence per card)
+    ADD DIRECTED EDGE NEXT (FROM Transaction, TO Transaction) WITH STATS="TRUE";
+
+    // INVOLVES: ClosedCase -> Transaction
+    ADD DIRECTED EDGE INVOLVES (FROM ClosedCase, TO Transaction) WITH STATS="TRUE";
+
+    // ON_CARD: ClosedCase -> Card
+    ADD DIRECTED EDGE ON_CARD (FROM ClosedCase, TO Card) WITH STATS="TRUE";
+
+    // CONNECTED_TO: ClosedCase -> Card (Secondary connected cards in fraud ring)
+    ADD DIRECTED EDGE CONNECTED_TO (FROM ClosedCase, TO Card) WITH STATS="TRUE";
+
+}
+
+// Execute and commit schema alterations
+RUN SCHEMA_CHANGE JOB update_fraud_graph_schema
+DROP JOB update_fraud_graph_schema

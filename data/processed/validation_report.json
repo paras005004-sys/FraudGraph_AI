@@ -1,0 +1,119 @@
+{
+  "transactions": {
+    "total_rows": 590742,
+    "unique_transaction_ids": 590742,
+    "duplicate_transaction_ids": 0,
+    "missing_required_columns": [],
+    "risk_score_invalid_count": 0,
+    "risk_score_range": [
+      0.01,
+      0.99
+    ],
+    "timestamp_range": [
+      "2016-07-02 00:02:21",
+      "2016-12-31 23:58:54"
+    ],
+    "top_null_rates": {
+      "dist2": 0.9362564368201347,
+      "D7": 0.9340812063472718,
+      "D13": 0.895077715821797,
+      "D14": 0.8946832965998693,
+      "D12": 0.89038700481767,
+      "D6": 0.8760287909104144,
+      "D8": 0.8730071672574491,
+      "D9": 0.8730071672574491,
+      "V138": 0.8610036191772381,
+      "V139": 0.8610036191772381,
+      "V140": 0.8610036191772381,
+      "V141": 0.8610036191772381,
+      "V142": 0.8610036191772381,
+      "V146": 0.8610036191772381,
+      "V147": 0.8610036191772381
+    },
+    "transaction_ids_set_count": 590742
+  },
+  "identity": {
+    "total_rows": 144432,
+    "unique_transaction_ids": 144432,
+    "duplicate_transaction_ids": 0,
+    "columns_count": 41,
+    "has_device_type": true,
+    "has_device_info": true,
+    "top_null_rates": {
+      "id_24": 0.9670917802149108,
+      "id_25": 0.9644261659466047,
+      "id_07": 0.9642669214578486,
+      "id_08": 0.9642669214578486,
+      "id_21": 0.964239226764152,
+      "id_26": 0.9642115320704553,
+      "id_22": 0.9641699900299102,
+      "id_27": 0.9641699900299102,
+      "id_23": 0.9633876149329789,
+      "id_18": 0.6872299767364572
+    },
+    "transaction_ids_set_count": 144432
+  },
+  "closed_cases": {
+    "total_rows": 5565,
+    "unique_case_ids": 5565,
+    "duplicate_case_ids": 0,
+    "outcome_distribution": {
+      "confirmed_fraud": 4665,
+      "cleared": 900
+    },
+    "pattern_distribution": {
+      "card_not_present_fraud": 1404,
+      "account_takeover": 1205,
+      "card_not_present_new_device": 1076,
+      "out_of_region_use": 955,
+      "none": 900,
+      "card_testing": 16,
+      "undocumented": 9
+    },
+    "referenced_txn_count": 14955,
+    "referenced_txn_ids_set_count": 14955
+  },
+  "case_pack": {
+    "total_rows": 20,
+    "unique_case_ids": 20,
+    "is_exactly_20_cases": true,
+    "missing_expected_case_ids": [],
+    "trigger_type_distribution": {
+      "risk_score": 11,
+      "customer_report": 8,
+      "analyst_request": 1
+    },
+    "flagged_txn_ids": [
+      3514030,
+      3478782,
+      3530164,
+      3583227,
+      3523199,
+      3476682,
+      3514948,
+      3558054,
+      3581141,
+      3506725,
+      3583368,
+      3553342,
+      3526826,
+      3478561,
+      3464869,
+      3534820,
+      3450629,
+      3491361,
+      3503878,
+      3509359
+    ],
+    "flagged_txn_ids_set_count": 20
+  },
+  "cross_validation": {
+    "identity_in_transactions_match_count": 144432,
+    "unmatched_identity_transactions_count": 0,
+    "closed_cases_in_transactions_match_count": 14955,
+    "unmatched_closed_cases_transactions_count": 0,
+    "case_pack_in_transactions_match_count": 20,
+    "unmatched_case_pack_transactions_count": 0,
+    "all_case_pack_txns_valid": true
+  }
+}

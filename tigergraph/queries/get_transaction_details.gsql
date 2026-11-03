@@ -1,0 +1,18 @@
+USE GRAPH FraudGraph
+
+// ----------------------------------------------------------------------------
+// Query 1-6: Get Transaction Details & Associated Entities
+// ----------------------------------------------------------------------------
+CREATE QUERY get_transaction_details(STRING txn_id) FOR GRAPH FraudGraph {
+    Start = {Transaction.*};
+    Target = SELECT t FROM Start:t WHERE t.TransactionID == txn_id;
+    
+    // Connected entities
+    Cards = SELECT c FROM Target:t -(<MADE)- Card:c;
+    Customers = SELECT cust FROM Cards:c -(<OWNS)- Customer:cust;
+    Devices = SELECT d FROM Target:t -(FROM_DEVICE)-> DeviceProfile:d;
+    Emails = SELECT e FROM Target:t -(PURCHASER_EMAIL)-> EmailDomain:e;
+    Regions = SELECT r FROM Target:t -(BILLED_IN)-> BillingRegion:r;
+    
+    PRINT Target, Cards, Customers, Devices, Emails, Regions;
+}

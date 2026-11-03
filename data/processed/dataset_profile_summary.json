@@ -1,0 +1,81 @@
+{
+  "transactions": {
+    "total_rows": 590742,
+    "total_columns": 397,
+    "risk_score_min": 0.01,
+    "risk_score_max": 0.99,
+    "channel_counts": {
+      "in_person": 439670,
+      "online": 151072
+    },
+    "product_counts": {
+      "W": 439670,
+      "H": 33024,
+      "R": 37699,
+      "C": 68721,
+      "S": 11628
+    }
+  },
+  "identity": {
+    "total_rows": 144432,
+    "total_columns": 41,
+    "device_types": {
+      "desktop": 85204,
+      "mobile": 55801
+    },
+    "top_device_models": {
+      "Windows": 47741,
+      "iOS Device": 19805,
+      "MacOS": 12579,
+      "Trident/7.0": 7446,
+      "rv:11.0": 1904
+    }
+  },
+  "closed_cases": {
+    "total_rows": 5565,
+    "outcome_counts": {
+      "confirmed_fraud": 4665,
+      "cleared": 900
+    },
+    "pattern_counts": {
+      "card_not_present_fraud": 1404,
+      "account_takeover": 1205,
+      "card_not_present_new_device": 1076,
+      "out_of_region_use": 955,
+      "none": 900,
+      "card_testing": 16,
+      "undocumented": 9
+    },
+    "total_exposure_usd": 2072387.77
+  },
+  "case_pack": {
+    "total_rows": 20,
+    "case_ids": [
+      "HHG-001",
+      "HHG-002",
+      "HHG-003",
+      "HHG-004",
+      "HHG-005",
+      "HHG-006",
+      "HHG-007",
+      "HHG-008",
+      "HHG-009",
+      "HHG-010",
+      "HHG-011",
+      "HHG-012",
+      "HHG-013",
+      "HHG-014",
+      "HHG-015",
+      "HHG-016",
+      "HHG-017",
+      "HHG-018",
+      "HHG-019",
+      "HHG-020"
+    ],
+    "trigger_counts": {
+      "risk_score": 11,
+      "customer_report": 8,
+      "analyst_request": 1
+    }
+  }
+}

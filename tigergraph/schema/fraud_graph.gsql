@@ -1,0 +1,114 @@
+// ============================================================================
+// FraudGraph AI — TigerGraph GSQL Schema Definition
+// Graph: FraudGraph
+// Vertices: 7 | Edges: 9
+// Authoritative Baseline: docs/RELATIONSHIP_AUDIT_REPORT.md
+// ============================================================================
+
+CREATE GRAPH FraudGraph ()
+
+USE GRAPH FraudGraph
+
+// ----------------------------------------------------------------------------
+// 1. VERTICES (7 Types)
+// ----------------------------------------------------------------------------
+
+// Customer Vertex
+CREATE VERTEX Customer (
+    PRIMARY_ID customer_id STRING
+) WITH STATS="TRUE";
+
+// Card Vertex
+CREATE VERTEX Card (
+    PRIMARY_ID card_id STRING,
+    customer_id STRING,
+    card1 STRING,
+    card_network STRING,
+    card_type STRING
+) WITH STATS="TRUE";
+
+// Transaction Vertex
+CREATE VERTEX Transaction (
+    PRIMARY_ID TransactionID STRING,
+    customer_id STRING,
+    ts STRING,
+    channel STRING,
+    risk_score DOUBLE,
+    amount DOUBLE,
+    product_cd STRING,
+    C1 DOUBLE,
+    C2 DOUBLE,
+    D1 DOUBLE,
+    D2 DOUBLE
+) WITH STATS="TRUE";
+
+// DeviceProfile Vertex (Composite signature: DeviceInfo | OS | Browser | Screen)
+CREATE VERTEX DeviceProfile (
+    PRIMARY_ID device_profile_id STRING,
+    device_type STRING,
+    device_info STRING,
+    os STRING,
+    browser STRING,
+    screen STRING,
+    proxy_status STRING,
+    device_status STRING
+) WITH STATS="TRUE";
+
+// EmailDomain Vertex
+CREATE VERTEX EmailDomain (
+    PRIMARY_ID domain_name STRING
+) WITH STATS="TRUE";
+
+// BillingRegion Vertex
+CREATE VERTEX BillingRegion (
+    PRIMARY_ID addr1 STRING,
+    country_code DOUBLE
+) WITH STATS="TRUE";
+
+// ClosedCase Vertex (Historical Investigations & Case Memory)
+CREATE VERTEX ClosedCase (
+    PRIMARY_ID case_id STRING,
+    customer_id STRING,
+    card_id STRING,
+    opened_at STRING,
+    closed_at STRING,
+    outcome STRING,
+    pattern STRING,
+    first_fraud_txn_id STRING,
+    n_txns INT,
+    exposure_usd DOUBLE,
+    actions_taken STRING,
+    report_filed STRING,
+    analyst_notes STRING
+) WITH STATS="TRUE";
+
+// ----------------------------------------------------------------------------
+// 2. EDGES (9 Types)
+// ----------------------------------------------------------------------------
+
+// OWNS: Customer -> Card
+CREATE DIRECTED EDGE OWNS (FROM Customer, TO Card) WITH STATS="TRUE";
+
+// MADE: Card -> Transaction
+CREATE DIRECTED EDGE MADE (FROM Card, TO Transaction) WITH STATS="TRUE";
+
+// FROM_DEVICE: Transaction -> DeviceProfile
+CREATE DIRECTED EDGE FROM_DEVICE (FROM Transaction, TO DeviceProfile) WITH STATS="TRUE";
+
+// PURCHASER_EMAIL: Transaction -> EmailDomain
+CREATE DIRECTED EDGE PURCHASER_EMAIL (FROM Transaction, TO EmailDomain) WITH STATS="TRUE";
+
+// BILLED_IN: Transaction -> BillingRegion
+CREATE DIRECTED EDGE BILLED_IN (FROM Transaction, TO BillingRegion) WITH STATS="TRUE";
+
+// NEXT: Transaction -> Transaction (Chronological sequence on same card)
+CREATE DIRECTED EDGE NEXT (FROM Transaction, TO Transaction) WITH STATS="TRUE";
+
+// INVOLVES: ClosedCase -> Transaction
+CREATE DIRECTED EDGE INVOLVES (FROM ClosedCase, TO Transaction) WITH STATS="TRUE";
+
+// ON_CARD: ClosedCase -> Card
+CREATE DIRECTED EDGE ON_CARD (FROM ClosedCase, TO Card) WITH STATS="TRUE";
+
+// CONNECTED_TO: ClosedCase -> Card (Secondary connected cards in fraud ring)
+CREATE DIRECTED EDGE CONNECTED_TO (FROM ClosedCase, TO Card) WITH STATS="TRUE";

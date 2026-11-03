@@ -1,0 +1,70 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+*.egg
+.eggs/
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Environment variables & secrets
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+*.secret
+
+# IDE & Editor temporary files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Testing & Cache
+.pytest_cache/
+.coverage
+htmlcov/
+.cache/
+
+# Streamlit runtime
+.streamlit/
+
+# Logs & temporary runtimes
+*.log
+logs/
+temp/
+tmp/
+
+# Outputs
+outputs/
+
+# Large raw dataset files (> 50 MB / GitHub limits)
+# Note: transactions.csv (675 MB) and generated Transaction.csv (51.8 MB)
+# must remain available locally and not be committed to GitHub.
+dataset/HHGOA_IEEE/transactions.csv
+data/graph_load/vertices/Transaction.csv
+
+# Explicitly track small benchmark & ground truth files in dataset/
+!dataset/HHGOA_IEEE/case_pack.csv
+!dataset/HHGOA_IEEE/closed_cases_history.csv
+!dataset/HHGOA_IEEE/identity.csv
+!dataset/HHGOA_IEEE/README.md
+
+# Model artifacts
+*.pkl
+*.joblib
+*.h5
+*.pt
+*.onnx

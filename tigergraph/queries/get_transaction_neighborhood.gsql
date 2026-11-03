@@ -1,0 +1,22 @@
+USE GRAPH FraudGraph
+
+// ----------------------------------------------------------------------------
+// Query 10: Get Transaction N-Hop Subgraph Neighborhood
+// ----------------------------------------------------------------------------
+CREATE QUERY get_transaction_neighborhood(STRING txn_id, INT max_hops) FOR GRAPH FraudGraph {
+    Start = {Transaction.*};
+    TargetTxn = SELECT t FROM Start:t WHERE t.TransactionID == txn_id;
+    
+    // 1-hop entities
+    Cards = SELECT c FROM TargetTxn:t -(<MADE)- Card:c;
+    Devices = SELECT d FROM TargetTxn:t -(FROM_DEVICE)-> DeviceProfile:d;
+    Emails = SELECT e FROM TargetTxn:t -(PURCHASER_EMAIL)-> EmailDomain:e;
+    Regions = SELECT r FROM TargetTxn:t -(BILLED_IN)-> BillingRegion:r;
+    
+    // 2-hop entities
+    OtherTxns = SELECT t2 FROM Devices:d -(<FROM_DEVICE)- Transaction:t2 WHERE t2.TransactionID != txn_id;
+    OtherCards = SELECT c2 FROM OtherTxns:t2 -(<MADE)- Card:c2;
+    Cases = SELECT cc FROM Cards:c -(<ON_CARD)- ClosedCase:cc;
+    
+    PRINT TargetTxn, Cards, Devices, Emails, Regions, OtherTxns, OtherCards, Cases;
+}

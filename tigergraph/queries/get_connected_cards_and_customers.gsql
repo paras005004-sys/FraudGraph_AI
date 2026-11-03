@@ -1,0 +1,20 @@
+USE GRAPH FraudGraph
+
+// ----------------------------------------------------------------------------
+// Query 9: Get Connected Cards and Customers (Shared Device Traversal)
+// ----------------------------------------------------------------------------
+CREATE QUERY get_connected_cards_and_customers(STRING txn_id) FOR GRAPH FraudGraph {
+    Start = {Transaction.*};
+    TargetTxn = SELECT t FROM Start:t WHERE t.TransactionID == txn_id;
+    
+    // Devices used by transaction
+    Devices = SELECT d FROM TargetTxn:t -(FROM_DEVICE)-> DeviceProfile:d;
+    // Other transactions using same device
+    SharedDeviceTxns = SELECT t2 FROM Devices:d -(<FROM_DEVICE)- Transaction:t2 WHERE t2.TransactionID != txn_id;
+    // Cards using shared device
+    SharedCards = SELECT c FROM SharedDeviceTxns:t2 -(<MADE)- Card:c;
+    // Customers owning shared cards
+    SharedCustomers = SELECT cust FROM SharedCards:c -(<OWNS)- Customer:cust;
+    
+    PRINT Devices, SharedDeviceTxns, SharedCards, SharedCustomers;
+}

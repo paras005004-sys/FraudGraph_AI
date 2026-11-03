@@ -1,0 +1,16 @@
+USE GRAPH FraudGraph
+
+// ----------------------------------------------------------------------------
+// Query 8: Get Connected Transactions (Chronological NEXT Sequence)
+// ----------------------------------------------------------------------------
+CREATE QUERY get_connected_transactions(STRING txn_id, INT window_size) FOR GRAPH FraudGraph {
+    Start = {Transaction.*};
+    TargetTxn = SELECT t FROM Start:t WHERE t.TransactionID == txn_id;
+    
+    // Next transactions
+    NextTxns = SELECT t2 FROM TargetTxn:t -(NEXT*1..window_size)-> Transaction:t2;
+    // Prior transactions
+    PriorTxns = SELECT t1 FROM TargetTxn:t -(<NEXT*1..window_size)-> Transaction:t1;
+    
+    PRINT TargetTxn, PriorTxns, NextTxns;
+}
